@@ -61,11 +61,6 @@ public class MasterImportService
                 {
                     variantRecords.Add(record);
                 }
-                else if (gidType == "None")
-                {
-                    // Skip records with "None" as ID - these are intentionally empty
-                    summary.Skipped++;
-                }
                 else
                 {
                     // Unknown or invalid type - add to problematic records
@@ -611,13 +606,8 @@ public class MasterImportService
     {
         if (string.IsNullOrEmpty(gid))
         {
-            return "None";
-        }
-
-        // Handle explicit "None" value (common in databases for null values)
-        if (gid.Equals("None", StringComparison.OrdinalIgnoreCase))
-        {
-            return "None";
+            _logger.LogWarning("Empty or null GID encountered");
+            return "Unknown";
         }
 
         var parts = gid.Split('/');
@@ -1027,26 +1017,21 @@ public class MasterImportService
                 Guid? productNewId = null;
                 Guid? variantNewId = null;
                 
-                if (!string.IsNullOrEmpty(item.ProductGid) && !item.ProductGid.Equals("None", StringComparison.OrdinalIgnoreCase))
+                if (!string.IsNullOrEmpty(item.ProductGid))
                 {
                     // Check if it's a Product or ProductVariant GID
                     var gidType = ParseShopifyGidType(item.ProductGid);
+                    var legacyId = ExtractIdFromGid(item.ProductGid);
                     
-                    // Skip if it's "None" or "Unknown"
-                    if (gidType != "None" && gidType != "Unknown")
+                    if (legacyId > 0)
                     {
-                        var legacyId = ExtractIdFromGid(item.ProductGid);
-                        
-                        if (legacyId > 0)
+                        if (gidType == "Product" && productIdMap.TryGetValue(legacyId, out var foundProductId))
                         {
-                            if (gidType == "Product" && productIdMap.TryGetValue(legacyId, out var foundProductId))
-                            {
-                                productNewId = foundProductId;
-                            }
-                            else if (gidType == "ProductVariant" && variantIdMap.TryGetValue(legacyId, out var foundVariantId))
-                            {
-                                variantNewId = foundVariantId;
-                            }
+                            productNewId = foundProductId;
+                        }
+                        else if (gidType == "ProductVariant" && variantIdMap.TryGetValue(legacyId, out var foundVariantId))
+                        {
+                            variantNewId = foundVariantId;
                         }
                     }
                 }

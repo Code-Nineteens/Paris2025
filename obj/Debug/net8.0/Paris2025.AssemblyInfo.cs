@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Paris2025")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+620813836c7ac3ee5014326885492da02cf479bd")]
 [assembly: System.Reflection.AssemblyProductAttribute("Paris2025")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Paris2025")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
