@@ -7,11 +7,10 @@ EXPOSE 5273
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["Paris2025.csproj", "Paris2025/"]
-RUN dotnet restore "Paris2025/Paris2025.csproj"
+WORKDIR /src/Paris2025
+COPY ["Paris2025.csproj", "./"]
+RUN dotnet restore "./Paris2025.csproj"
 COPY . .
-WORKDIR "/src/Paris2025"
 RUN dotnet build "./Paris2025.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
